@@ -47,10 +47,9 @@ The specs are:
   * 16GB RAM
   * 500GB SSD
 
-Read more about these Macbooks here:
+Read more about this Macbooks here:
 
-* [2020](https://everymac.com/systems/apple/macbook_pro/specs/macbook-pro-m1-8-core-13-2020-specs.html)
-* [2021](https://everymac.com/systems/apple/macbook_pro/specs/macbook-pro-m1-pro-8-core-cpu-14-core-gpu-14-2021-specs.html)
+* [2022](https://everymac.com/systems/apple/macbook_pro/specs/macbook-pro-m1-pro-10-core-cpu-16-core-gpu-16-2021-specs.html)
 
 ## OS Settings
 
