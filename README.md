@@ -39,15 +39,13 @@ This repo contains info on all the apps / tools / settings I use on my Mac.
 
 ## What Macbook do I have?
 
-I am using a 2020 13" Macbook Pro for work and a 2021 14" Macbook Pro for personal stuff.
+I am using a 2022 16" Macbook Pro for work at Cisco AppDynamics.
 
-The specs for both machines:
-* 2020
-  * Apple M1
-* 2021
+The specs are:
+* 2022
   * Apple M1 Pro
-* 16GB RAM
-* 500GB SSD
+  * 16GB RAM
+  * 500GB SSD
 
 Read more about these Macbooks here:
 
