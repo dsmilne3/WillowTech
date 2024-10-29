@@ -1,129 +1,101 @@
-## My Mac Setup
+<!-- TOC -->
+
+- [My Laptop](#my-laptop)
+- [Native Tools, Settings, & Preferences](#native-tools-settings--preferences)
+- [Homebrew](#homebrew)
+- [Raycast](#raycast)
+- [Window Management](#window-management)
+- [Break Timer](#break-timer)
+- [App Switching](#app-switching)
+- [Menu Bar Widgets and Utilities](#menu-bar-widgets-and-utilities)
+- [Shell & Terminal](#shell--terminal)
+- [Docker Desktop](#docker-desktop)
+- [Web Browser](#web-browser)
+- [VS Code](#vs-code)
+- [Node.js](#nodejs)
+- [Other Apps I Use Often](#other-apps-i-use-often)
+- [Screen Recording & Demo Editing](#screen-recording--demo-editing)
+
+<!-- /TOC -->
 
 This repo contains info on all the apps / tools / settings I use on my Mac.
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## My Laptop
 
+I'm using a 16" Macbook Pro with Apple silicon for work at Cisco AppDynamics.
 
-- [What Macbook do I have?](#what-macbook-do-i-have)
-- [OS Settings](#os-settings)
-  - [Desktop](#desktop)
-  - [Finder](#finder)
-  - [Dock](#dock)
-- [Quick Launching](#quick-launching)
-- [Homebrew](#homebrew)
-  - [Homebrew](#homebrew-1)
-  - [RayCast Homebrew Plugin](#raycast-homebrew-plugin)
-- [Window Management](#window-management)
-- [App Switching](#app-switching)
-- [Menu Bar Utilities](#menu-bar-utilities)
-  - [Hidden Bar](#hidden-bar)
-  - [System Stats Widgets](#system-stats-widgets)
-  - [Menu Bar Calendar](#menu-bar-calendar)
-- [Break Timer](#break-timer)
-- [Web Browser](#web-browser)
-  - [Firefox](#firefox)
-- [Other Apps I Use Daily](#other-apps-i-use-daily)
-  - [Docker](#docker)
-- [Terminal](#terminal)
-  - [Shell](#shell)
-    - [Load dotfiles](#load-dotfiles)
-  - [Github SSH Setup](#github-ssh-setup)
-    - [Other command line tools I use](#other-command-line-tools-i-use)
-- [Node.js](#nodejs)
-  - [Global Modules](#global-modules)
-- [VS Code](#vs-code)
+- Apple M1 Pro
+- 16GB RAM
+- 500GB SSD
+- [Complete specs](https://everymac.com/systems/apple/macbook_pro/specs/macbook-pro-m1-pro-10-core-cpu-16-core-gpu-16-2021-specs.html)
 
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## Native Tools, Settings, & Preferences
 
-## What Macbook do I have?
+These are my preferred settings changes for my peripherals, Desktop, Dock, and Finder.
 
-I am using a 2022 16" Macbook Pro for work at Cisco AppDynamics.
+### System Settings -> Mouse
 
-The specs are:
-* 2022
-  * Apple M1 Pro
-  * 16GB RAM
-  * 500GB SSD
+- Tracking speed = 3rd fastest
+- Natural scrolling = Disabled
+- Smart Zoom = Enabled
 
-Read more about this Macbooks here:
+### System Settings -> Printers & Scanners
 
-* [2022](https://everymac.com/systems/apple/macbook_pro/specs/macbook-pro-m1-pro-10-core-cpu-16-core-gpu-16-2021-specs.html)
+The Canon Pixma MX472 print drivers are preinstalled in MacOS, so the printer installation is straight forward. But I had to download the latest scanner ICA driver and IJ Scan Utility for my version of MacOS (currently 14.x). For some reason, Canon's US support site didn't have these, so I had to use [the site for Canada](https://canoncanada.custhelp.com/app/browse/a_status/published/channelRecordID/DRIVERS_AND_SOFTWARE/pageSize/25/productCategoryAnsList/RN_PRODUCT_2403%3ARN_CATEGORY_3516%3ARN_CATEGORY_318/productRecordID/RN_PRODUCT_2403/truncate/200/type/browse/session/L3RpbWUvMTczMDAxMjc2My9nZW4vMTczMDAxMjc2Mi9zaWQvZlVSeUFzX1dtMEhldzNGaTM1JTdFMWklN0VSYkRoOHVJX3B4cDZISmFqXzcxT0JVVmJ4aFVnellMYnFud1VaUWhLR1JMRzNwUG1Kc3BmTjJxRmNSSTR5SUZ4UExza2dHdXdqN0d1NXNCUU0ydSU3RW5xZHY0Sk9JMFhRQTd3JTIxJTIx).
 
-## OS Settings
+### System Settings -> Desktop & Dock
 
-These are my preferred settings for `Desktop`, `Finder` and the `Dock`.
+I remove most apps from the dock except the ones I use most often so I can easily launch and switch between them. This may change as I attempt to transition to using the keyboard and Finder (or its replacement) more often.
 
-### Desktop
+- Dock
+  - Size = Large; Magnification = Off; Position on Screen = Right; Minimize windows into application icon = Enabled; Automatically hide/show dock = Enabled; Show suggested and recent apps in Dock = Disabled
+- Desktop & Stage Manager
+  - Show Items: On Desktop = Enabled; In Stage Manager = Disabled
+  - Click wallpaper to reveal desktop = Only in Stage Manager
+- Keyboard -> Keyboard Shortcuts -> Spotlight
+  - Show Spotlight search = Disabled (you'll see why in the RayCast section)
 
-I don't like the new Desktop, Stage Manager or Widget features in Sonoma, so I disable them.
+### Finder Settings and View Preferences
 
-* System Preferences
-  * Desktop & Dock
-    * Desktop & Stage Manager
-      * Show Items
-        * On Desktop -> uncheck
-        * In Stage Manager -> uncheck
-      * Click wallpaper to reveal desktop -> Only in Stage Manager
-      * Stage Manager -> uncheck
-      * Widgets
-        * On Desktop -> uncheck
-        * In Stage Manager -> uncheck
+I like to be able to see when a device or server connection is persistent. Since I leave my desktop relatively bare, these settings help me notice that I might have some cleanup work to do. Separately, don't use tags in MacOS.
 
-### Finder
+- Settings
+  - General
+    - Show these on the desktop: CDs, DVDs, and iPods = Disabled
+    - New Finder windows show -> Home Folder
+  - Tags - All disabled
+  - Sidebar
+    - Favorites - Recent, Movies, Music, Pictures = Disabled
+    - Locations - MacBook Pro = Disabled
+    - Tags - Recent Tags = Disabled
+  - Advanced
+    - Show warning before changing an extension = Disabled
+    - Keep folders on Top: In windows when sorting by name = Enabled
+    - When performing a search: Search the current folder
+- View
+  - Show Tab Bar
+  - Show Path Bar
+  - Show Status Bar
 
-* Finder -> Preferences
-  * General -> Show these on the desktop -> Select None
-      * I try to keep my desktop completely clean.
-  * General -> New Finder windows show -> Home Folder
-      * I prefer to see my home folder in each new finder window instead of recent documents
-  * Advanced -> Show all filename extensions -> Yes
-  * Advanced -> Show warning before changing an extension -> No
-  * Advanced -> When performing a search -> Search the current folder
-* View
-  * Show Status Bar
-  * Show Path Bar
-  * Show Tab Bar
+## Homebrew
 
-### Dock
+[Homebrew](https://brew.sh/) is my preferred package manager for MacOS. We'll use it extensively to install tools and apps from the command line. Xcode CLI Build Tools is included in the installation. Open up the built in `Terminal` app and run the install command from the website.
 
-I don't use the Dock at all. It takes up screen space, and I can use RayCast to launch apps and AltTab to switch between apps. I make the dock as small as possible and auto hide it.
+**Be sure to follow the instructions in the terminal - especially any commands that are needed to complete the configuration.**
 
-* System Preferences
-  * Desktop & Dock
-    * Size -> Small as possible
-    * Position on screen -> Left
-    * Automatically hide and show the Dock -> Yes
-    * Animate opening applications -> No
-    * Show suggested and recent apps in the Dock -> No
+After Homebrew is done installing, we will use it (via RayCast) to install everything else we need.
 
-## Quick Launching
+## Raycast
 
-The built in spotlight search is a bit slow for me and usually has web search results as the default instead of apps or folders on my machine.
+Credit goes to CJ at CodeingGarden for introducing me to [RayCast](https://www.raycast.com/) and some other utilities. You can check out this [video of his full setup](https://youtu.be/GK7zLYAXdDs?si=pXhMJ7DuB_48x5Jt&t=427).
 
-I recently switched from [Alfred](https://www.alfredapp.com/) to [RayCast](https://www.raycast.com/). I'm really liking it so far.
+The built in `Spotlight` tool prioritizes web search results over local apps or folders and there's no way to modify that behavior. RayCast doesn't do that and has a ton of other features. Install it by downloading the package from the website or via Homebrew by opening a `Terminal` and running this command:
 
 ```sh
 brew install raycast
 ```
 
-## Homebrew
-
-### Homebrew
-
-[Homebrew](https://brew.sh/) allows us to install tools and apps from the command line.
-
-To install it, open up the built in `Terminal` app and run this command:
-
-```sh
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-This will also install the xcode build tools which is needed by many other developer tools.
-
-After Homebrew is done installing, we will use it (via RayCast) to install everything else we need.
-
+**The first time you luanch RayCast, be sure to select the configuration option to use Spotlight's default keyboard shortcut (Command+Space)**.
 
 ### RayCast Homebrew Plugin
 
@@ -131,13 +103,7 @@ Install the [RayCast Homebrew Plugin](https://www.raycast.com/nhojb/brew) so we 
 
 ## Window Management
 
-I know this feature is built in to a lot of other operating systems, but it is not built in to a Mac, so we need an app for it.
-
-RayCast has this feature built in, but I am still using a separate app for this.
-
-I use [rectangle](https://rectangleapp.com/) to move and resize windows using keyboard shortcuts. I used to use [spectacle](https://www.spectacleapp.com/), but rectangle is more regularly maintained and allows me to use all of the same keyboard shortcuts as spectacle.
-
-I highly recommend installing this and memorizing the keyboard shortcuts. Fluid and seamless window management is key to being productive while coding.
+Positioning windows with keyboard shortcuts isn't included in MacOS, so we need an app for it. RayCast has this feature, but requires a Pro subscription. So instead, I use [rectangle](https://rectangleapp.com/).
 
 Search for `rectangle` in RayCast `brew search` or:
 
@@ -145,13 +111,33 @@ Search for `rectangle` in RayCast `brew search` or:
 brew install rectangle
 ```
 
+Launch the app to configure settings:
+
+- Launch on login = Enabled
+- Check for updates automatically = Enabled
+
+## Break Timer
+
+I use [Stretchly](https://hovancik.net/stretchly/) mainly because it doesn't have any in-app purchases. As of this writing, it's an unsigned app, so it needs a little special treatment to get installed...
+
+```sh
+brew install --cask --no-quarantine stretchly
+```
+
+Launch the app to configure settings:
+
+- Start Stretchly automatically when logging in = Enabled
+- Shows breaks on all monitors = Disabled
+- Show breaks even in Do Not Disturb mode = Enabled
+- Schedule:
+  - Mini Break - 1 minute every 15 minutes
+  - Long Break - 5 minutes every 60 minutes
+- Theme:
+  - Enable transparency = Enabled
+
 ## App Switching
 
-The built in App switcher only shows application icons, and only shows 1 icon per app regardless of how many windows you have open in that app.
-
-I use an app switcher called [AltTab](https://alt-tab-macos.netlify.app/). It shows full window previews, and has an option to show a preview for every open window in all applications (even minimized ones).
-
-I replace the built-in `CMD+TAB` shortcut with AltTab.
+The built in App switcher only shows application icons. It also only shows one icon per app regardless of how many windows of that app there are. So instead, I use an app switcher called [AltTab](https://alt-tab-macos.netlify.app/). It shows full window previews, and has an option to show a preview for every open window in all applications (even minimized ones).
 
 Search for `alt-tab` in RayCast `brew search` or:
 
@@ -159,23 +145,22 @@ Search for `alt-tab` in RayCast `brew search` or:
 brew install alt-tab
 ```
 
-## Menu Bar Utilities
+Launch the app enable the settings that would allow it to take screenshot thumbnails , it enable it in the list of apps allowed to do Screen & System Audio Recording and control the screen. In addition, add these configuration settings to replace the default app switcher's shortcut (`Command`+`Tab`):
 
-### Hidden Bar
+- Controls tab -> Shortcut 1 -> Trigger shortcut: set to Hold `Command`
+- Appearance tab -> Thumbnails: Size = Small
 
-If you have several apps running that have menu bar icons, [Hidden Bar](https://github.com/dwarvesf/hidden) will let you choose which ones should be hidden after a timeout. This cleans things up if you have a ton of background apps running.
+## Menu Bar Widgets and Utilities
 
-Search for `hiddenbar` in RayCast `brew search` or:
+At this point, there are a ton of icons in the menu bar and it's missing some helpful information. There's an app for that...
 
-```sh
-brew install hiddenbar
-```
+### Default Widgets
+
+These are accessed by clicking the system date/time in the Menu Bar. I'm still exploring what's available for my new laptop. More to follow as I play around with them.
 
 ### System Stats Widgets
 
-I use [stats](https://github.com/exelban/stats) to see my network traffic, CPU temp / usage and RAM usage at a glance.
-
-In each widget, a key setting to look for is under "widget settings", choose "merge widgets into one".
+I use [stats](https://github.com/exelban/stats) to see CPU usage / temp, RAM utilization, and network traffic at a glance.
 
 Search for `stats` in RayCast `brew search` or:
 
@@ -183,31 +168,56 @@ Search for `stats` in RayCast `brew search` or:
 brew install stats
 ```
 
-### Menu Bar Calendar
+Launch the app to configure settings:
 
-I like to have a calendar in the menu bar that I can quickly look at. stats does not include one, so I found [itsycal](https://www.mowglii.com/itsycal/).
+- Start automatically when logging in = Enabled
+- Select Do not share anonymous telemetry data
+- Review the icon/widget settings you want to see
+- I usually merge the label with the graph widget and set them with a Frame and color them based on some value so they turn yellow/red as that metric increases.
+
+### Hidden Bar
+
+I use [Hidden Bar](https://github.com/dwarvesf/hidden) to choose which icons should be hidden after a timeout.
+
+Search for `hiddenbar` in RayCast `brew search` or:
 
 ```sh
-brew install itsycal
+brew install hiddenbar
 ```
 
-itsycal shows the date, so I hide the date in the system menu bar widget:
+## Shell & Terminal
 
-* System Preferences
-  * Dock & Menu Bar
-      * Clock
-          * Show Date -> Never
-          * Show Day of Week -> No
+I don't mind the default `Terminal`, but I do have some visual preferences I set in the `Ocean.terminal` file you can check out in this repo.
 
-## Break Timer
+An ennhancement to `Zsh` is [Oh My Zsh](https://ohmyz.sh/).  Get the install command from the website.
 
-I use an app called [Time Out](https://www.dejal.com/timeout/).
+I haven't discovered any specific settings to change yet, but I'll add those here if/when I do.
 
-I have it setup to show:
-* 10 second micro break every 15 minutes
-* 5 minute long break every 60 minutes
+### Load dotfiles
 
-There is also a cross platform break timer call [Stretchly](https://hovancik.net/stretchly/). I have not used it but a lot of people have recommended it.
+All my dotfiles are stored on [github](https://github.com/w3cj/dotfiles).
+
+I clone this repo to my machine and copy the files into my home directory.
+
+## Docker Desktop
+
+There are multiple results when you searching `docker` within `RayCast`. To be sure I'm getting Docker Desktop, I'll use `Homebrew` directly instead:
+
+```sh
+brew install --cask docker
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Web Browser
 
@@ -229,118 +239,30 @@ brew install homebrew/cask-versions/firefox-developer-edition
 
 I use the following extensions to stay productive:
 
-* [Tabliss](https://tabliss.io/) - simple new tab page
-* [OneTab](https://www.one-tab.com/) - consolidate a bunch of open tabs into a shareable list of links
-* [Dark Reader](https://darkreader.org/) - turn any site into dark mode
+- [Tabliss](https://tabliss.io/) - simple new tab page
+- [OneTab](https://www.one-tab.com/) - consolidate a bunch of open tabs into a shareable list of links
+- [Dark Reader](https://darkreader.org/) - turn any site into dark mode
 
 I use the following extensions to protect my privacy while browsing the web:
 
-* Adblocker - [uBlock Origin](https://github.com/gorhill/uBlock)
-* Tracker Blocker - [Privacy Badger](https://privacybadger.org/)
-  * Firefox now includes tracker blocking, but I leave Privacy Badger enabled.
-* [Decentraleyes](https://decentraleyes.org/)
-  * Caches CDN links locally and intercepts requests to serve from the cache. Prevents CDNs from tracking you across websites.
-
-## Other Apps I Use Daily
-
-* android-file-transfer - Transfer files to / from my android phone
-* android-platform-tools - Installs `adb` without the need for the full android studio.
-* [keepingyouawake](https://keepingyouawake.app/) - Prevents my Mac from going to sleep when I'm presenting / live streaming
-* [discord](https://discord.com/) - Messaging / Community
-* [vlc](https://www.videolan.org/) - I use VLC to watch videos instead of the built in QuickTime.
-* [keka](https://www.keka.io/en/) - Can extract 7z / rar and other types of archives
-* [kap](https://getkap.co/) - Screen recorder / gif maker
-* [figma](https://www.figma.com/) - Image editor
-* [visual-studio-code](https://code.visualstudio.com/) - Code Editor
-* [sublime-text](https://www.sublimetext.com/) - Note taking (I know there are better apps...)
-
-You can install them in one go by placing them all into a text file and then running brew install:
-
-```
-android-file-transfer
-android-platform-tools
-keepingyouawake
-discord
-slack
-vlc
-keka
-kap
-time-out
-figma
-visual-studio-code
-sublime-text
-insomnia
-```
-
-```sh
-xargs brew install < apps.txt
-```
-
-### Docker
-
-There are multiple results when you search `docker` within `brew`. To install Docker desktop:
-
-```sh
-brew install --cask docker
-```
-
-## Terminal
-
-I prefer [iTerm2](https://iterm2.com/) because:
-* Lots of customization options
-* Clickable links
-* Native OS notifications
-
-There are a lot of options for a terminal replacement, but I've been using iTerm2 for years and it works great for my needs.
-
-Checkout their documentation for more info on what iTerm2 can do: [https://iterm2.com/documentation.html](https://iterm2.com/documentation.html)
+- Adblocker - [uBlock Origin](https://github.com/gorhill/uBlock)
+- Tracker Blocker - [Privacy Badger](https://privacybadger.org/)
+  - Firefox now includes tracker blocking, but I leave Privacy Badger enabled.
+- [Decentraleyes](https://decentraleyes.org/)
+  - Caches CDN links locally and intercepts requests to serve from the cache. Prevents CDNs from tracking you across websites.
 
 
-```
-brew install iterm2
-```
 
-Once installed, launch it and customize the settings / preferences to your liking. These are my preferred settings:
+## VS Code
 
-* Appearance
-  * Theme
-    * Minimal
-* Profiles
-  * Default
-      * General -> Working Directory -> Reuse previous session's directory
-      * Colors -> Basic Colors -> Foreground -> Lime Green
-      * Text -> Font -> Anonymous Pro
-          * You can download this font [here](https://www.marksimonson.com/fonts/view/anonymous-pro).
-          * I use this font in VS Code as well
-      * Text -> Font Size -> 36
-          * I use my Macbook to present / teach, so a big font size is important so everyone can see the commands I'm typing
-      * Keys -> Key Mappings -> Presets -> Natural Text Editing
-          * This allows me to use the [keyboard shortcuts](https://gist.github.com/w3cj/022081eda22081b82c52) I know and love inside of iTerm2
+[VS Code](https://code.visualstudio.com/) - is my preferred code editor.
 
-### Shell
-
-Mac now comes with `zsh` as the default [shell](https://en.wikipedia.org/wiki/Comparison_of_command_shells). I've switched to using this with [Oh My Zsh](https://ohmyz.sh/).
-
-#### Load dotfiles
-
-All my dotfiles are stored on [github](https://github.com/w3cj/dotfiles).
-
-I clone this repo to my machine and copy the files into my home directory.
+You can view all of my VS Code settings / extensions [here](https://github.com/CodingGarden/vscode-settings).
 
 ### Github SSH Setup
 
-* Follow [this guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) to setup an ssh key for github
-* Follow [this guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) to add the ssh key to your github account
-
-#### Other command line tools I use
-
-* [ffmpeg](https://en.wikipedia.org/wiki/FFmpeg) - edit videos from the command line
-* [imagemagick](https://en.wikipedia.org/wiki/ImageMagick) - edit images from the command line
-
-```sh
-brew install ffmpeg
-brew install imagemagick
-```
+- Follow [this guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) to setup an ssh key for github
+- Follow [this guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) to add the ssh key to your github account
 
 ## Node.js
 
@@ -366,21 +288,46 @@ node --version
 
 There are a few global node modules I use a lot:
 
-* lite-server
-  * Auto refreshing static file server. Great for working on static apps with no build tools.
-* http-server
-  * Simple static file server.
-* license
-  * Auto generate open source license files
-* gitignore
-  * Auto generate `.gitignore` files base on the current project type
+- lite-server
+  - Auto refreshing static file server. Great for working on static apps with no build tools.
+- http-server
+  - Simple static file server.
+- license
+  - Auto generate open source license files
+- gitignore
+  - Auto generate `.gitignore` files base on the current project type
 
 ```
 npm install -g lite-server http-server license gitignore
 ```
 
-## VS Code
+## Other Apps I Use Often
 
-VS Code is my preferred code editor.
+- [sublime-text](https://www.sublimetext.com/) - Note taking (I know there are better apps...)
+- [slack](https://slack.com/) - Messaging
+- [keka](https://www.keka.io/en/) - Can extract 7z / rar and other types of archives
+- [keepingyouawake](https://keepingyouawake.app/) - Prevents my Mac from going to sleep so I don't have to keep my MacBook open all the time just to use the fingerprint scanner to unlock it.
+- [vlc](https://www.videolan.org/) - I use VLC to watch videos instead of the built in QuickTime.
 
-You can view all of my VS Code settings / extensions [here](https://github.com/CodingGarden/vscode-settings).
+You can install them in one go by placing them all into a text file and then running brew install:
+
+```
+sublime-text
+slack
+keka
+keepingyouawake
+vlc
+```
+
+```sh
+xargs brew install < apps.txt
+```
+
+## Screen Recording & Demo Editing
+
+I'm currently looking into:
+
+- [Movavi](https://www.movavi.com/screen-recorder-mac/)
+- [Screen Studio](https://screen.studio/)
+- [Wondershare DemoCreator](https://democreator.wondershare.com/?extra_param=eyJ0eXBlIjoid2ViX2NsaWVudF9pbmZvIiwiYnV5X3R5cGUiOiJvbmx5X3dlYiIsInNob3BwaW5nX2lkIjoiMTczMDA2ODg3NDYwM184Nzk0MDEifQ==)
+- [OBS Studio](https://obsproject.com/)
