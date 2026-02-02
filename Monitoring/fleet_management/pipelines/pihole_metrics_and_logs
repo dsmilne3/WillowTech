@@ -1,0 +1,132 @@
+discovery.relabel "pihole_exporter" {
+	targets = [
+		{__address__ = "127.0.0.1:9617"},
+	]
+
+	rule {
+		target_label = "instance"
+		replacement  = constants.hostname
+	}
+
+	rule {
+		target_label = "job"
+		replacement  = "integrations/pihole"
+	}
+}
+
+prometheus.scrape "pihole_exporter" {
+	job_name     = "integrations/pihole"
+	metrics_path = "/metrics"
+	targets      = discovery.relabel.pihole_exporter.output
+
+	// IMPORTANT: send scraped metrics through the relabel stage
+	forward_to = [prometheus.relabel.pihole_label_fix.receiver]
+}
+
+prometheus.relabel "pihole_label_fix" {
+	forward_to = [
+		prometheus.remote_write.grafana_cloud_metrics_home.receiver,
+		prometheus.remote_write.grafana_cloud_metrics_work.receiver,
+	]
+
+	// Force hostname label to match the machine hostname
+	rule {
+		target_label = "hostname"
+		replacement  = constants.hostname
+		action       = "replace"
+	}
+}
+
+// Forward metrics to Grafana Cloud
+prometheus.remote_write "grafana_cloud_metrics_home" {
+	endpoint {
+		url = sys.env("GCLOUD_HOME_PROM_URL")
+
+		basic_auth {
+			username = sys.env("GCLOUD_HOME_PROM_USER")
+			password = sys.env("GCLOUD_HOME_RW_API_KEY")
+		}
+	}
+}
+
+prometheus.remote_write "grafana_cloud_metrics_work" {
+	endpoint {
+		url = sys.env("GCLOUD_WORK_PROM_URL")
+
+		basic_auth {
+			username = sys.env("GCLOUD_WORK_PROM_USER")
+			password = sys.env("GCLOUD_WORK_RW_API_KEY")
+		}
+	}
+}
+
+discovery.relabel "pihole_journal" {
+	targets = []
+
+	rule {
+		source_labels = ["__journal__systemd_unit"]
+		regex         = "pihole-FTL\\.service"
+		action        = "keep"
+	}
+
+	rule {
+		target_label = "instance"
+		replacement  = constants.hostname
+	}
+
+	rule {
+		target_label = "job"
+		replacement  = "integrations/pihole"
+	}
+
+	rule {
+		source_labels = ["__journal_priority_keyword"]
+		target_label  = "level"
+	}
+
+	rule {
+		source_labels = ["__journal__systemd_unit"]
+		target_label  = "unit"
+	}
+}
+
+loki.source.journal "pihole_journal" {
+	max_age       = "24h0m0s"
+	relabel_rules = discovery.relabel.pihole_journal.rules
+	forward_to    = [loki.write.grafana_cloud_logs.receiver]
+}
+
+local.file_match "pihole_file_logs" {
+	path_targets = [{
+		__address__ = "localhost",
+		__path__    = "/var/log/pihole/*.log",
+		instance    = constants.hostname,
+		job         = "integrations/pihole",
+	}]
+}
+
+loki.source.file "pihole_file_logs" {
+	targets    = local.file_match.pihole_file_logs.targets
+	forward_to = [loki.write.grafana_cloud_logs.receiver]
+}
+
+// Send logs to Grafana Cloud Loki
+loki.write "grafana_cloud_logs" {
+	endpoint {
+		url = sys.env("GCLOUD_HOME_LOKI_URL")
+
+		basic_auth {
+			username = sys.env("GCLOUD_HOME_LOKI_USER")
+			password = sys.env("GCLOUD_HOME_RW_API_KEY")
+		}
+	}
+
+	endpoint {
+		url = sys.env("GCLOUD_WORK_LOKI_URL")
+
+		basic_auth {
+			username = sys.env("GCLOUD_WORK_LOKI_USER")
+			password = sys.env("GCLOUD_WORK_RW_API_KEY")
+		}
+	}
+}

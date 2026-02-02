@@ -1,0 +1,48 @@
+// THIS IS A GENERATED REMOTE CONFIGURATION.
+// 
+//   * You can edit the contents and matchers for this configuration without them being overwritten.
+//   * If you delete ALL generated configurations, the latest default versions will be recreated.
+//   * This configuration requires the following environment variables to be set wherever alloy is running:
+//     * GCLOUD_RW_API_KEY: The Grafana Cloud API key with write access to Loki.
+
+// Send logs to Grafana Cloud Loki
+loki.write "grafana_cloud_logs" {
+	endpoint {
+		url = sys.env("GCLOUD_HOME_LOKI_URL")
+
+		basic_auth {
+			username = sys.env("GCLOUD_HOME_LOKI_USER")
+			password = sys.env("GCLOUD_HOME_RW_API_KEY")
+		}
+	}
+
+	endpoint {
+		url = sys.env("GCLOUD_WORK_LOKI_URL")
+
+		basic_auth {
+			username = sys.env("GCLOUD_WORK_LOKI_USER")
+			password = sys.env("GCLOUD_WORK_RW_API_KEY")
+		}
+	}
+}
+
+// Read Alloy logs from the Windows Event Log with the following additional labels:
+//   * job: "integrations/alloy" is compatible with Grafana Cloud's Alloy Health Integrations.
+//   * collector_id: The unique collector ID matching the remotecfg id argument value.
+//                   Used to match collector-specific metrics to power the 'Collector
+//                   Health' section of the Fleet Management UI.
+loki.source.windowsevent "alloy_logs" {
+	xpath_query = `<QueryList>
+  <Query Id="0" Path="Application">
+    <Select Path="Application">*[System[Provider[@Name='Alloy']]]</Select>
+  </Query>
+</QueryList>`
+
+	forward_to = [loki.write.grafana_cloud_logs.receiver]
+	labels     = {
+		"job"            = "integrations/alloy",
+		"collector_id"   = argument.attributes.value["collector.ID"],
+		"collector_role" = argument.attributes.value["collector.role"],
+		"service_name"   = "alloy",
+	}
+}

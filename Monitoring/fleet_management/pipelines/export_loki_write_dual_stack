@@ -1,0 +1,28 @@
+// Write logs to your Grafana Cloud Loki instance.
+loki.write "grafana_cloud_logs" {
+	endpoint {
+		url = sys.env("GCLOUD_HOME_LOKI_URL")
+
+		basic_auth {
+			username = sys.env("GCLOUD_HOME_LOKI_USER")
+			password = sys.env("GCLOUD_HOME_RW_API_KEY")
+		}
+	}
+
+	endpoint {
+		url = sys.env("GCLOUD_WORK_LOKI_URL")
+
+		basic_auth {
+			username = sys.env("GCLOUD_WORK_LOKI_USER")
+			password = sys.env("GCLOUD_WORK_RW_API_KEY")
+		}
+	}
+}
+
+// This block creates the "pipeline export" that can be referenced by other FM pipelines
+// References to the exported pipeline follow the syntax - argument.pipeline_exports.value["PIPELINE_NAME"]["EXPORT_NAME"]
+// Example: forward_to = [argument.pipeline_exports.value["metrics_receiver"]["receiver"]]
+// https://grafana.com/docs/grafana-cloud/send-data/fleet-management/set-up/configuration-pipelines/pipeline-export-injection/
+export "receiver" {
+	value = loki.write.grafana_cloud_logs.receiver
+}

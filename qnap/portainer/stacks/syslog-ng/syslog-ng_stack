@@ -1,0 +1,12 @@
+services:
+  syslogng:
+    image: balabit/syslog-ng:latest
+    container_name: syslog-ng
+    hostname: syslog-ingress-qnap
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - /share/docker_data/syslog-ng_data/log_collection:/var/log:rw
+      - /share/docker_data/syslog-ng_data/syslog-ng.conf:/etc/syslog-ng/syslog-ng.conf:ro
+      - /share/docker_data/syslog-ng_data/logrotate.d/byhost:/etc/logrotate.d/byhost:ro
+      

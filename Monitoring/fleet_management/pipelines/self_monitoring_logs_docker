@@ -1,0 +1,32 @@
+// Discover Docker containers and read their logs
+discovery.docker "alloy_containers" {
+	host = "unix:///var/run/docker.sock"
+
+	filter {
+		name   = "ancestor"
+		values = ["grafana/alloy"]
+	}
+}
+
+// Read Alloy container logs with the following labels:
+//   * job: "integrations/alloy" is compatible with Grafana Cloud's Alloy Health Integrations.
+//   * collector_id: The unique collector ID matching the remotecfg id argument value.
+//                   Used to match collector-specific metrics to power the 'Collector
+//                   Health' section of the Fleet Management UI.
+loki.source.docker "alloy_logs" {
+	host       = "unix:///var/run/docker.sock"
+	targets    = discovery.docker.alloy_containers.targets
+	forward_to = [loki.process.add_static_labels.receiver]
+}
+
+loki.process "add_static_labels" {
+	stage.static_labels {
+		values = {
+			job            = "integrations/alloy",
+			collector_id   = argument.attributes.value["collector.ID"],
+			collector_role = argument.attributes.value["collector.role"],
+			service_name   = "alloy",
+		}
+	}
+	forward_to = [argument.pipeline_exports.value["export_loki_write_work"]["receiver"]]
+}

@@ -1,0 +1,33 @@
+prometheus.scrape "nvidia_gpu" {
+	targets = [{
+		"__address__" = "localhost:9835", "__metrics_path__" = "/metrics",
+	}]
+	forward_to = [
+		prometheus.remote_write.grafana_cloud_metrics_home.receiver,
+		prometheus.remote_write.grafana_cloud_metrics_work.receiver,
+	]
+	scrape_interval = "30s"
+}
+
+// Forward metrics to Grafana Cloud
+prometheus.remote_write "grafana_cloud_metrics_home" {
+	endpoint {
+		url = sys.env("GCLOUD_HOME_PROM_URL")
+
+		basic_auth {
+			username = sys.env("GCLOUD_HOME_PROM_USER")
+			password = sys.env("GCLOUD_HOME_RW_API_KEY")
+		}
+	}
+}
+
+prometheus.remote_write "grafana_cloud_metrics_work" {
+	endpoint {
+		url = sys.env("GCLOUD_WORK_PROM_URL")
+
+		basic_auth {
+			username = sys.env("GCLOUD_WORK_PROM_USER")
+			password = sys.env("GCLOUD_WORK_RW_API_KEY")
+		}
+	}
+}

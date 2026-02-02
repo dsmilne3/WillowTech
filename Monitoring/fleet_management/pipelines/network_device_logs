@@ -1,0 +1,89 @@
+// Receive RFC3164 logs from syslog-ng over UDP
+loki.source.syslog "integrations_snmp" {
+	listener {
+		address                = "0.0.0.0:10514"
+		protocol               = "udp"
+		syslog_format          = "rfc3164"
+		use_incoming_timestamp = false
+		labels                 = {
+			job = "integrations/snmp",
+		}
+	}
+	forward_to = [loki.process.integrations_snmp_extract.receiver]
+}
+
+// Extract and add device labels  
+loki.process "integrations_snmp_extract" {
+	forward_to = [argument.pipeline_exports.value["export_loki_write_work"]["receiver"]]
+
+	// Extract device hostname to a temp label  
+	stage.regex {
+		expression = "(?P<temp_device>GT-AXE11000-[^\\s]+|core-sg2218[^\\s]*|access-sg2008[^\\s]*)"
+	}
+
+	// Promote to a real label  
+	stage.labels {
+		values = {
+			temp_device = "",
+		}
+	}
+
+	// Extract syslog APP-NAME (process name) from BSD/RFC3164 format
+	// Format: <PRI>Jan 26 HH:MM:SS HOSTNAME PROCESSNAME[PID]: MESSAGE
+	// Captures: HTTPD, dnsmasq-dhcp, vpnclient5, ddns, hostapd, etc.
+	stage.regex {
+		expression = "^<\\d+>\\w+\\s+\\d+\\s+\\d+:\\d+:\\d+\\s+[^\\s]+\\s+(?P<syslog_app_name>[a-zA-Z0-9_\\-]+)(?:\\[|\\:)"
+	}
+
+	// Add syslog_app_name as a label if extracted
+	stage.labels {
+		values = {
+			syslog_app_name = "",
+		}
+	}
+
+	// Now use stage.match on the LABEL (not content)  
+	stage.match {
+		selector = "{temp_device=~\"GT-AXE11000.*\"}"
+
+		stage.static_labels {
+			values = {
+				snmp_target = "GT-AXE11000-0C20",
+				instance    = "GT-AXE11000-0C20",
+				hostname    = "GT-AXE11000-0C20",
+				job_snmp    = "integrations/snmp",
+			}
+		}
+	}
+
+	stage.match {
+		selector = "{temp_device=~\"core-sg2218.*\"}"
+
+		stage.static_labels {
+			values = {
+				snmp_target = "core-sg2218",
+				instance    = "core-sg2218",
+				hostname    = "core-sg2218",
+				job_snmp    = "integrations/snmp",
+			}
+		}
+	}
+
+	stage.match {
+		selector = "{temp_device=~\"access-sg2008.*\"}"
+
+		stage.static_labels {
+			values = {
+				snmp_target = "access-sg2008",
+				instance    = "access-sg2008",
+				hostname    = "access-sg2008",
+				job_snmp    = "integrations/snmp",
+			}
+		}
+	}
+
+	// Drop temp label  
+	stage.label_drop {
+		values = ["temp_device"]
+	}
+}

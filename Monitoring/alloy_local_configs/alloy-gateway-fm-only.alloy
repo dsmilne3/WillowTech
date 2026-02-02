@@ -1,0 +1,58 @@
+// Global configuration blocks
+livedebugging {
+  enabled = true
+}
+
+// Alloy Config Variables for Work stack, https://davidmilne.grafana.net (WORK)
+// Get API keys from: https://grafana.com/orgs/davidmilne/api-keys
+// Alloy Config Variables for Personal stack, https://dsmilne3.grafana.net (HOME)
+// Get API keys from: https://grafana.com/orgs/dsmilne3/api-keys
+
+// Fleet Management registration
+// Uncomment lines as needed depending on FM registration destination
+// Do **NOT** configure this block for simultaneous FM memberships
+remotecfg {
+//	url            = sys.env("GCLOUD_HOME_FM_URL")
+	url            = sys.env("GCLOUD_WORK_FM_URL")
+
+	id             = constants.hostname
+	poll_frequency = "60s"
+
+	basic_auth {
+//		username = sys.env("GCLOUD_HOME_FM_USER")
+//		password = sys.env("GCLOUD_HOME_RW_API_KEY")
+
+		username = sys.env("GCLOUD_WORK_FM_USER")
+		password = sys.env("GCLOUD_WORK_RW_API_KEY")
+	}
+}
+
+prometheus.remote_write "metrics_service" {
+	endpoint {
+//		url = sys.env("GCLOUD_HOME_PROM_URL")
+		url = sys.env("GCLOUD_WORK_PROM_URL")
+		
+		basic_auth {
+//			username = sys.env("GCLOUD_HOME_PROM_USER")
+//			password = sys.env("GCLOUD_HOME_RW_API_KEY")
+
+			username = sys.env("GCLOUD_WORK_PROM_USER")
+			password = sys.env("GCLOUD_WORK_RW_API_KEY")
+		}
+	}
+}
+
+loki.write "grafana_cloud_loki" {
+	endpoint {
+//		url = sys.env("GCLOUD_HOME_LOKI_URL")
+		url = sys.env("GCLOUD_WORK_LOKI_URL")
+		
+		basic_auth {
+//			username = sys.env("GCLOUD_HOME_LOKI_USER")
+//			password = sys.env("GCLOUD_HOME_RW_API_KEY")
+
+			username = sys.env("GCLOUD_WORK_LOKI_USER")
+			password = sys.env("GCLOUD_WORK_RW_API_KEY")
+		}
+   }
+}

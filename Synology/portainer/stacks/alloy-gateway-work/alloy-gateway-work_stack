@@ -1,0 +1,49 @@
+services:
+#  netdebug:
+#    image: alpine:3.20
+#    network_mode: host # use the same as the host for troubleshooting
+#    command: sh -lc "apk add --no-cache curl ca-certificates net-snmp-tools && sleep 1d"
+#    restart: "no"
+  alloy-gateway:
+    image: grafana/alloy:v1.12.1
+    network_mode: bridge
+    container_name: alloy-gateway-work
+    hostname: alloy-gateway
+    dns:
+      - 192.168.50.5
+      - 1.1.1.1
+    mem_limit: 512m
+    mem_reservation: 128m
+    cpu_shares: 512
+    security_opt:
+      - no-new-privileges=true
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
+      - --stability.level=experimental
+      - /etc/alloy/config.alloy
+    ports:
+     # Exposed ports allow LAN access (192.168.50.0/24) via NAS IP
+     # - "3100:3100" # Loki receiver - accessible from LAN and containers
+     # - "9090:9090" # Prometheus receiver - accessible from LAN and containers
+     - "12345:12345" # Alloy web UI
+     - "10514:10514/udp" # listener for BSD-style (RFC3164) syslogs (usually switches)
+     - "10515:10515" # listener for IETF-style (RFC5424) syslogs (usually routers)
+    volumes:
+      - /volume2/docker/alloy-gateway/config.alloy:/etc/alloy/config.alloy:ro
+      - /volume2/docker/alloy-gateway/data:/var/lib/alloy/data:rw
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /volume2/docker/alloy-gateway/snmp.yml:/etc/alloy/snmp.yml:ro
+      - /volume2/docker/alloy-gateway/auths.yml:/etc/alloy/auths.yml:ro
+    environment:
+      - TZ=America/Los_Angeles
+    env_file:
+      - stack.env
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "alloy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: on-failure:5

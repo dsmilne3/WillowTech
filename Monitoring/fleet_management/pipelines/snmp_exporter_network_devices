@@ -1,0 +1,62 @@
+prometheus.exporter.snmp "integrations_snmp" {
+
+	//for private authentification profiles, set additional file with snmp_exporter auths:
+	//https://github.com/prometheus/snmp_exporter/tree/main/generator#file-format
+	config_file           = "/etc/alloy/auths.yml"
+	config_merge_strategy = "merge"
+
+	target "core_switch" {
+		address = "192.168.50.2"
+		module  = "system,if_mib"
+		auth    = "readonly"
+		// walk_params = "readonly" // refers to an auth entry in snmp.yml (name varies by schema)
+	}
+
+	target "access_media_switch" {
+		address = "192.168.50.3"
+		// append more vendor specific modules, i.e "cisco_device", or "juniper":
+		module = "system,if_mib"
+		auth   = "readonly"
+		// walk_params = "readonly" // refers to an auth entry in snmp.yml (name varies by schema)
+	}
+}
+
+prometheus.scrape "integrations_snmp" {
+	targets        = prometheus.exporter.snmp.integrations_snmp.targets
+	forward_to     = [prometheus.relabel.integrations_snmp.receiver]
+	job_name       = "integrations/snmp"
+	scrape_timeout = "30s"
+}
+
+prometheus.relabel "integrations_snmp" {
+	forward_to = [
+		argument.pipeline_exports.value["export_prom_remote_write_dual_stack"]["receiver_home"],
+		argument.pipeline_exports.value["export_prom_remote_write_dual_stack"]["receiver_work"],
+	]
+
+	rule {
+		source_labels = ["job"]
+		regex         = "(^.*snmp)\\/(.*)"
+		target_label  = "job_snmp"
+	}
+
+	rule {
+		source_labels = ["job"]
+		regex         = "(^.*snmp)\\/(.*)"
+		target_label  = "snmp_target"
+		replacement   = "$2"
+	}
+
+	rule {
+		source_labels = ["job"]
+		regex         = "(^.*snmp)\\/(.*)"
+		target_label  = "instance"
+		replacement   = "$2"
+	}
+
+	rule {
+		action        = "keep"
+		regex         = "cefcFRUPowerOperStatus|cempMemPoolFree|cempMemPoolType|cempMemPoolUsed|ciscoImageString|ciscoMemoryPoolFree|ciscoMemoryPoolUsed|cpmCPUMemoryFree|cpmCPUMemoryUsed|cpmCPUTotal1minRev|entSensorPrecision|entSensorValue|fcHCIfBBCreditTransistionFromZero|fcHCIfBBCreditTransistionToZero|fcIfCurrRxBbCredit|fcIfCurrTxBbCredit|fcIfFramesDiscard|fcIfInvalidCrcs|fcIfInvalidTxWords|fcIfTxWaitCount|fcIfTxWtAvgBBCreditTransitionToZero|hrProcessorLoad|hrStorageSize|hrStorageUsed|ifAdminStatus|ifConnectorPresent|ifHCInBroadcastPkts|ifHCInMulticastPkts|ifHCInOctets|ifHCInUcastPkts|ifHCOutBroadcastPkts|ifHCOutMulticastPkts|ifHCOutOctets|ifHCOutUcastPkts|ifHighSpeed|ifInDiscards|ifInErrors|ifInUnknownProtos|ifLastChange|ifMtu|ifOperStatus|ifOutDiscards|ifOutErrors|ifPhysAddress|ifPromiscuousMode|ifType_info|jnxOperatingBuffer|jnxOperatingCPU|jnxOperatingTemp|mtxrHlPower|mtxrHlTemperature|mtxrHlVoltage|snmp_scrape_duration_seconds|snmp_scrape_pdus_returned|sysDescr|sysName|sysUpTime|up"
+		source_labels = ["__name__"]
+	}
+}

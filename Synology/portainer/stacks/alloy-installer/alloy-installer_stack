@@ -1,0 +1,58 @@
+services:
+  alloy-installer:
+    image: alpine:latest
+    container_name: alloy-installer
+    hostname: alloy-installer
+    networks:
+      - telemetry-net
+    mem_limit: 512m
+    mem_reservation: 128m
+    cpu_shares: 512
+    security_opt:
+      - no-new-privileges=true
+    command:
+      - /bin/sh
+      - -c
+      - |
+        apk update || exit 1
+        apk add --no-cache curl ca-certificates || exit 1
+        # Verify curl was installed
+        if ! command -v curl >/dev/null 2>&1; then
+          echo "ERROR: curl installation failed"
+          exit 1
+        fi
+        echo "curl installed successfully"
+        echo ""
+        echo "=========================================="
+        echo "Container ready for manual installation"
+        echo "=========================================="
+        echo "Environment variables are already set."
+        echo "To run the installation script, exec into the container and run:"
+        echo ""
+        echo "  /bin/sh -c \"\$(curl -fsSL https://storage.googleapis.com/cloud-onboarding/alloy/scripts/install-linux.sh)\""
+        echo ""
+        # Keep container running for manual execution
+        tail -f /dev/null
+    volumes:
+      - /volume2/docker/alloy-installer:/opt/alloy:rw
+    environment:
+      - TZ=America/Los_Angeles
+      - GCLOUD_HOSTED_METRICS_ID=1760943
+      - GCLOUD_HOSTED_METRICS_URL=https://prometheus-prod-36-prod-us-west-0.grafana.net/api/prom/push
+      - GCLOUD_HOSTED_LOGS_ID=979940
+      - GCLOUD_HOSTED_LOGS_URL=https://logs-prod-021.grafana.net/loki/api/v1/push
+      - GCLOUD_FM_URL=https://fleet-management-prod-014.grafana.net
+      - GCLOUD_FM_POLL_FREQUENCY=60s
+      - GCLOUD_FM_HOSTED_ID=1022160
+      - ARCH=amd64
+      - GCLOUD_RW_API_KEY=REDACTED
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    restart: unless-stopped
+
+networks:
+  telemetry-net:
+    name: telemetry-net
+    external: true
+

@@ -1,0 +1,105 @@
+// Alloy config with Fleet Management + Local Receivers
+// This config registers Alloy with Grafana Cloud Fleet Management
+// Receivers are defined locally (infrastructure-level configuration)
+// Pipelines and forwarding will be managed remotely via Fleet Management
+
+remotecfg {
+	url            = "https://fleet-management-prod-014.grafana.net"
+	id             = "Alloy_Gateway"
+	poll_frequency = "60s"
+
+	basic_auth {
+		username = "1022160"
+		password = sys.env("GCLOUD_RW_API_KEY")
+	}
+}
+
+// Prometheus remote write endpoint (may be managed by Fleet Management)
+prometheus.remote_write "metrics_service" {
+	endpoint {
+		url = "https://prometheus-prod-36-prod-us-west-0.grafana.net/api/prom/push"
+
+		basic_auth {
+			username = "1760943"
+			password = sys.env("GCLOUD_RW_API_KEY")
+		}
+	}
+}
+
+// Loki write endpoint for logs (may be managed by Fleet Management)
+loki.write "grafana_cloud_loki" {
+	endpoint {
+		url = "https://logs-prod-021.grafana.net/loki/api/v1/push"
+
+		basic_auth {
+			username = "979940"
+			password = sys.env("GCLOUD_RW_API_KEY")
+		}
+	}
+}
+
+// Tempo write endpoint for traces (may be managed by Fleet Management)
+tempo.write "grafana_cloud_tempo" {
+	endpoint {
+		url = "https://tempo-us-central-0.grafana.net:443"
+
+		basic_auth {
+			username = "1760943"
+			password = sys.env("GCLOUD_RW_API_KEY")
+		}
+	}
+}
+
+// OTLP receiver for metrics, logs, and traces from OpenTelemetry-instrumented applications
+// and other Alloy agents. This receiver accepts telemetry on ports 4317 (gRPC) and 4318 (HTTP)
+otelcol.receiver.otlp "otlp_receiver" {
+	grpc {
+		endpoint = "0.0.0.0:4317"
+	}
+	http {
+		endpoint = "0.0.0.0:4318"
+	}
+	output {
+		metrics = [otelcol.processor.batch.otlp_batch.input]
+		logs    = [otelcol.processor.batch.otlp_batch.input]
+		traces  = [otelcol.processor.batch.otlp_batch.input]
+	}
+}
+
+// Batch processor to batch telemetry data before exporting
+otelcol.processor.batch "otlp_batch" {
+	output {
+		metrics = [otelcol.exporter.prometheusremote.otlp_metrics.input]
+		logs    = [otelcol.exporter.loki.otlp_logs.input]
+		traces  = [otelcol.exporter.otlp.otlp_traces.input]
+	}
+}
+
+// Prometheus remote write exporter - converts OTLP metrics to Prometheus format
+otelcol.exporter.prometheusremote "otlp_metrics" {
+	external_labels = {
+		source = "otlp_gateway"
+	}
+	forward_to = [prometheus.remote_write.metrics_service.receiver]
+}
+
+// Loki exporter - converts OTLP logs to Loki format
+otelcol.exporter.loki "otlp_logs" {
+	forward_to = [loki.write.grafana_cloud_loki.receiver]
+}
+
+// OTLP exporter for traces - sends traces to Tempo
+otelcol.exporter.otlp "otlp_traces" {
+	client {
+		endpoint = "https://tempo-us-central-0.grafana.net:443"
+		auth {
+			authenticator {
+				basic_auth {
+					username = "1760943"
+					password = sys.env("GCLOUD_RW_API_KEY")
+				}
+			}
+		}
+	}
+}
+

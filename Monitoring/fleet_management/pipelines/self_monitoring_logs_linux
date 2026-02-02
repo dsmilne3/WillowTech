@@ -1,0 +1,54 @@
+// THIS IS A GENERATED REMOTE CONFIGURATION.
+//
+//   * You can edit the contents and matchers for this configuration without them being overwritten.
+//   * If you delete ALL generated configurations, the latest default versions will be recreated.
+//   * This configuration requires the following environment variables to be set wherever alloy is running:
+//     * GCLOUD_RW_API_KEY: The Grafana Cloud API key with write access to Loki.
+// 
+// Write logs to your Grafana Cloud Loki instance.
+//loki.write "grafana_cloud_logs" {
+//	endpoint {
+//		url = sys.env("GCLOUD_HOME_LOKI_URL")
+//
+//		basic_auth {
+//			username = sys.env("GCLOUD_HOME_LOKI_USER")
+//			password = sys.env("GCLOUD_HOME_RW_API_KEY")
+//		}
+//	}
+//}
+//
+// Read Alloy logs when running as a systemd service with the following additional labels:
+//   * job: "integrations/alloy" is compatible with Grafana Cloud's Alloy Health Integrations.
+//   * collector_id: The unique collector ID matching the remotecfg id argument value.
+//                   Used to match collector-specific metrics to power the 'Collector
+//                   Health' section of the Fleet Management UI.
+
+loki.source.journal "alloy_logs_unit" {
+	matches = "_SYSTEMD_UNIT=alloy.service"
+	//	forward_to = [loki.write.grafana_cloud_logs.receiver]
+	forward_to = [argument.pipeline_exports.value["export_loki_remote_write_work"]["receiver"]]
+	labels     = {
+		"job"            = "integrations/alloy",
+		"collector_id"   = argument.attributes.value["collector.ID"],
+		"collector_role" = argument.attributes.value["collector.role"],
+		"service_name"   = "alloy",
+	}
+}
+
+// Read Alloy logs from syslog with the following additional labels:
+//   * job: "integrations/alloy" is compatible with Grafana Cloud's Alloy Health Integrations.
+//   * collector_id: The unique collector ID matching the remotecfg id argument value.
+//                   Used to match collector-specific metrics to power the 'Collector
+//                   Health' section of the Fleet Management UI.
+
+loki.source.journal "alloy_logs_tag" {
+	matches = "SYSLOG_IDENTIFIER=alloy"
+	//	forward_to = [loki.write.grafana_cloud_logs.receiver]
+	forward_to = [argument.pipeline_exports.value["export_loki_remote_write_work"]["receiver"]]
+	labels     = {
+		"job"            = "integrations/alloy",
+		"collector_id"   = argument.attributes.value["collector.ID"],
+		"collector_role" = argument.attributes.value["collector.role"],
+		"service_name"   = "alloy",
+	}
+}
